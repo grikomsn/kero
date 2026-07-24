@@ -154,6 +154,54 @@ Test by running an **older** build and choosing **Check for Updates…**.
 
 ---
 
+## Homebrew Cask
+
+Each release also updates the Homebrew cask in the
+[`grikomsn/homebrew-kero`](https://github.com/grikomsn/homebrew-kero) tap.
+The release script generates the cask file from
+[`scripts/cask.rb.tmpl`](scripts/cask.rb.tmpl) with the correct version and
+SHA-256, writing it to `build/kero.rb`.
+
+### Syncing the cask to the tap repo
+
+The release script generates the cask file but does **not** commit it to the
+ tap repo automatically. To sync:
+
+1. Clone the tap repo locally:
+   ```sh
+   git clone https://github.com/grikomsn/homebrew-kero.git
+   ```
+2. Run the release with `TAP_DIR` pointing at the clone:
+   ```sh
+   TAP_DIR=../homebrew-kero bun scripts/release.ts
+   ```
+   The script copies the generated `build/kero.rb` to
+   `../homebrew-kero/Casks/kero.rb`.
+3. Commit and push the tap repo:
+   ```sh
+   cd ../homebrew-kero && git add Casks/kero.rb && git commit -m "kero: <version>" && git push
+   ```
+
+### Automated updates
+
+The tap repo has a [GitHub Action](https://github.com/grikomsn/homebrew-kero/blob/main/.github/workflows/update.yml)
+that can auto-update the cask when a new tag is pushed to the kero repo, or via
+`workflow_dispatch` with manual `version` and `sha256` inputs.
+
+### Users
+
+Users can install with:
+```sh
+brew tap grikomsn/kero
+brew install kero
+```
+Or in one step:
+```sh
+brew install grikomsn/kero/kero
+```
+
+---
+
 ## Notes
 
 - **Two artifacts per release:** a notarized `.dmg` (what people download) and a

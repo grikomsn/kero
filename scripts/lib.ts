@@ -1,5 +1,15 @@
 // Shared helpers for the release scripts.
 
+import { crypto } from "node:crypto";
+import { readFileSync } from "node:fs";
+
+/** Compute the SHA-256 hex digest of a file. */
+export function sha256(filePath: string): string {
+  const hash = crypto.createHash("sha256");
+  hash.update(readFileSync(filePath));
+  return hash.digest("hex");
+}
+
 /** Print a highlighted progress line. */
 export const say = (msg: string): void =>
   console.log(`\n\x1b[1;34m==>\x1b[0m ${msg}`);

@@ -14,6 +14,7 @@ const RELEASES_ORIGIN = 'https://releases.kero.sh'
 const APPCAST_URL = `${RELEASES_ORIGIN}/appcast.xml`
 const X_URL = 'https://x.com/localhost_4173'
 const GITHUB_URL = 'https://github.com/egoist/kero'
+const HOMEBREW_TAP_URL = 'https://github.com/grikomsn/homebrew-kero'
 
 // Shown only if the appcast can't be reached; kept current so downloads still work.
 const FALLBACK: Release = {
@@ -246,6 +247,15 @@ function Home() {
           >
             <span className="i-mingcute-apple-fill size-4 shrink-0" />
             Download .dmg
+          </a>
+          <a
+            href={HOMEBREW_TAP_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-[9px] border border-border bg-card px-4 py-[7px] text-foreground transition-colors hover:border-brand hover:bg-brand/8 hover:text-brand"
+          >
+            <span className="i-mingcute-homebrew-fill size-4 shrink-0" />
+            Install with Homebrew
           </a>
           <a
             href={GITHUB_URL}

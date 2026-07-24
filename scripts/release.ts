@@ -23,7 +23,7 @@
 import { $ } from "bun";
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import { die, need, say } from "./lib";
+import { die, need, say, sha256 } from "./lib";
 import { generateAppcast } from "./generate-appcast";
 import { extractReleaseNotes } from "./changelog";
 
@@ -132,6 +132,34 @@ await $`xcrun notarytool submit ${dmgPath} --keychain-profile ${NOTARY_PROFILE} 
 say("Stapling tickets…");
 await $`xcrun stapler staple ${dmgPath}`;
 await $`xcrun stapler staple ${app}`;
+
+// ---- 5b. compute SHA-256 and generate the Homebrew cask ---------------------
+// The cask points at the same notarized DMG users download, so the checksum
+// must match it exactly. We generate the cask file from a template so the
+// release script stays the single source of truth for version + sha256.
+const dmgSha256 = sha256(dmgPath);
+say(`DMG sha256: ${dmgSha256}`);
+
+const caskTemplate = join(process.cwd(), "scripts/cask.rb.tmpl");
+const caskOutput = join(BUILD_DIR, "kero.rb");
+if (existsSync(caskTemplate)) {
+  let caskContent = await Bun.file(caskTemplate).text();
+  caskContent = caskContent
+    .replace(/\{\{VERSION\}\}/g, version)
+    .replace(/\{\{SHA256\}\}/g, dmgSha256);
+  await Bun.write(caskOutput, caskContent);
+  say(`Generated cask file: ${caskOutput}`);
+} else {
+  say("No cask template found — skipping cask generation");
+}
+
+// Optionally sync the cask file to a local tap checkout.
+const tapDir = process.env.TAP_DIR;
+if (tapDir && existsSync(caskOutput)) {
+  const tapCaskPath = join(tapDir, "Casks/kero.rb");
+  await Bun.write(tapCaskPath, await Bun.file(caskOutput).text());
+  say(`Synced cask to ${tapCaskPath}`);
+}
 
 // ---- 6. package the Sparkle update (pull history first for deltas) --------
 // The DMG is the download; Sparkle updates from this zip so it can build small

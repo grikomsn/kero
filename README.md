@@ -17,6 +17,12 @@ A native terminal workspace for macOS.
 
 https://kero.sh
 
+Or install via Homebrew:
+
+```sh
+brew install grikomsn/kero/kero
+```
+
 ## License
 
 GPLv3

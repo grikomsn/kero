@@ -12,6 +12,7 @@ set in the Xcode project.
 
 ## [unreleased]
 
+- Add Homebrew Cask support: `brew install grikomsn/kero/kero`
 - Security: stop terminal programs from silently reading your clipboard — an OSC 52 escape sequence (for example from a remote SSH host) could previously read the macOS clipboard without any prompt; kero now asks for confirmation first, matching the Ghostty app default (#8)
 - Warn before pasting text that looks like it could execute commands, matching Ghostty's paste protection
 - Fix fuzzy-looking terminal text: font thickening was unintentionally always on, making glyphs heavier and softer than stock Ghostty
