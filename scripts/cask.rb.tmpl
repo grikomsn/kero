@@ -1,0 +1,21 @@
+cask "kero" do
+  version "{{VERSION}}"
+  sha256 "{{SHA256}}"
+
+  url "https://releases.kero.sh/kero-#{version}.dmg"
+  name "Kero"
+  desc "Native macOS terminal workspace built around the terminal"
+  homepage "https://kero.sh"
+
+  app "Kero.app"
+
+  zap trash: [
+    "~/Library/Application Support/sh.kero",
+    "~/Library/Saved Application State/sh.kero.savedState",
+  ]
+
+  livecheck do
+    url "https://releases.kero.sh/appcast.xml"
+    strategy :sparkle
+  end
+end
